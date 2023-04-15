@@ -86,9 +86,10 @@ func GetAllPhotos(c *gin.Context) {
 func GetOnePhoto(c *gin.Context) {
 	db := database.GetDB()
 
-	photos := []models.Photo{}
+	photo := models.Photo{}
 
-	err := db.Debug().Preload("User").Order("id asc").Find(&photos).Error
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
+	err := db.First(&photo, "id = ?", photoId).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
@@ -97,11 +98,11 @@ func GetOnePhoto(c *gin.Context) {
 		return
 	}
 
-	photosString, _ := json.Marshal(photos)
-	photosResponse := []models.GetPhotoResponse{}
-	json.Unmarshal(photosString, &photosResponse)
+	photoString, _ := json.Marshal(photo)
+	photoResponse := models.GetPhotoResponse{}
+	json.Unmarshal(photoString, &photoResponse)
 
-	c.JSON(http.StatusOK, photosResponse)
+	c.JSON(http.StatusOK, photoResponse)
 }
 
 func UpdatePhoto(c *gin.Context) {

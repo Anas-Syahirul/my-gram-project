@@ -84,9 +84,10 @@ func GetAllComments(c *gin.Context) {
 func GetOneComment(c *gin.Context) {
 	db := database.GetDB()
 
-	comments := []models.Comment{}
+	comment := models.Comment{}
 
-	err := db.Debug().Preload("User").Preload("Photo").Order("id asc").Find(&comments).Error
+	commentId, _ := strconv.Atoi(c.Param("commentId"))
+	err := db.First(&comment, "id = ?", commentId).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
@@ -95,11 +96,11 @@ func GetOneComment(c *gin.Context) {
 		return
 	}
 
-	commentsString, _ := json.Marshal(comments)
-	commentsResponse := []models.GetCommentResponse{}
-	json.Unmarshal(commentsString, &commentsResponse)
+	commentString, _ := json.Marshal(comment)
+	commentResponse := models.GetCommentResponse{}
+	json.Unmarshal(commentString, &commentResponse)
 
-	c.JSON(http.StatusOK, commentsResponse)
+	c.JSON(http.StatusOK, commentResponse)
 }
 
 func UpdateComment(c *gin.Context) {
