@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"log"
 	"my-gram-project/models"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
-	host     = "localhost"
-	dbPort   = "5432"
-	user     = "postgres"
-	password = "postgres"
-	dbName   = "db3"
+	host     = os.Getenv("PGHOST")
+	dbPort   = os.Getenv("PGPORT")
+	user     = os.Getenv("PFUSER")
+	password = os.Getenv("PGPASSWORD")
+	dbName   = os.Getenv("PGDATABASE")
 	db       *gorm.DB
 	err      error
 )
